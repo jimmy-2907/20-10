@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Món quà nhỏ dành cho Ánh Ngọc 💗</title>
+<style>
+  :root {
+    --pink: #f6a9c5;
+    --deep-pink: #d95f91;
+    --soft-pink: #fff0f6;
+    --cream: #fffafd;
+    --text: #75445a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+    background: linear-gradient(135deg, #fffafd, #ffeaf3 55%, #fff);
+    overflow-x: hidden;
+  }
+  button, input { font: inherit; }
+  .screen {
+    min-height: 100vh;
+    width: 100%;
+    display: none;
+    position: relative;
+    padding: 28px 18px 70px;
+    overflow: hidden;
+  }
+  .screen.active { display: flex; }
+  /* Màn hình nhập mã PIN */
+  #lock-screen { align-items: center; justify-content: center; }
+  .lock-card {
+    width: min(420px, 94vw);
+    text-align: center;
+    padding: 36px 28px;
+    background: rgba(255,255,255,.86);
+    border: 1px solid #ffd3e3;
+    border-radius: 28px;
+    box-shadow: 0 18px 55px rgba(217,95,145,.16);
+    position: relative;
+    z-index: 2;
+  }
+  .lock-icon { font-size: 52px; margin-bottom: 8px; }
+  .eyebrow { color: var(--deep-pink); letter-spacing: 2px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+  h1, h2, p { margin-top: 0; }
+  .lock-card h1 { font-size: clamp(25px, 5vw, 34px); margin: 10px 0; }
+  .lock-card p { line-height: 1.65; }
+  .pin-input {
+    width: 100%; text-align: center; letter-spacing: 12px;
+    padding: 14px 16px; border: 1.5px solid #f3b5cd;
+    border-radius: 14px; background: #fff9fc; outline: none;
+    font-size: 24px; color: var(--deep-pink); margin: 10px 0 14px;
+  }
+  .pin-input:focus { border-color: var(--deep-pink); box-shadow: 0 0 0 4px #fce0eb; }
+  .primary-btn, .nav-btn {
+    border: 0; border-radius: 999px; padding: 12px 22px;
+    background: linear-gradient(135deg, #e87eaa, #d95f91);
+    color: white; font-weight: 700; cursor: pointer;
+    box-shadow: 0 8px 18px rgba(217,95,145,.22);
+    transition: transform .2s ease;
+  }
+  .primary-btn:hover, .nav-btn:hover { transform: translateY(-2px); }
+  #pin-error { min-height: 22px; color: #c33c70; font-size: 13px; margin: 10px 0 0; }
+  .floating-heart { position: absolute; opacity: .38; color: #e889b0; animation: float 6s ease-in-out infinite; user-select: none; }
+  .heart-a { top: 12%; left: 12%; font-size: 34px; }
+  .heart-b { bottom: 15%; right: 12%; font-size: 42px; animation-delay: 1s; }
+  .heart-c { top: 20%; right: 20%; font-size: 22px; animation-delay: 2s; }
+  @keyframes float { 0%,100% { transform: translateY(0) rotate(-8deg); } 50% { transform: translateY(-18px) rotate(8deg); } }
+
+  /* Hai trang quà tặng */
+  .gift-screen { flex-direction: column; align-items: center; }
+  .page-heading { text-align: center; position: relative; z-index: 2; margin: 2px auto 12px; }
+  .page-heading h2 { color: #c84f82; font-size: clamp(25px, 4vw, 38px); margin: 7px 0; }
+  .page-heading p { margin-bottom: 0; font-size: 14px; }
+  .collage {
+    width: min(1080px, 100%);
+    flex: 1;
+    min-height: 610px;
+    position: relative;
+    margin: 0 auto;
+  }
+  .photo {
+    position: absolute;
+    width: clamp(112px, 17vw, 190px);
+    height: clamp(142px, 21vw, 225px);
+    padding: 7px 7px 27px;
+    background: #fff;
+    border: 1px solid #f7d3e1;
+    border-radius: 9px;
+    box-shadow: 0 12px 30px rgba(151, 76, 108, .17);
+    transform: rotate(var(--tilt, -5deg));
+    transition: transform .25s ease, box-shadow .25s ease;
+    z-index: 1;
+  }
+  .photo:hover { transform: rotate(0deg) scale(1.04); box-shadow: 0 18px 36px rgba(151,76,108,.23); z-index: 5; }
+  .photo img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 4px; background: linear-gradient(145deg,#fff1f7,#fbd3e3); }
+  .photo .placeholder {
+    width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 10px; border-radius: 4px;
+    color: #c16c91; font-size: 13px; background: repeating-linear-gradient(45deg,#fff7fb,#fff7fb 12px,#ffedf5 12px,#ffedf5 24px);
+  }
+  .p1 { top: 5%; left: 5%; --tilt: -8deg; }
+  .p2 { top: 2%; right: 5%; --tilt: 7deg; }
+  .p3 { top: 38%; left: 0%; --tilt: 5deg; }
+  .p4 { top: 39%; right: 0%; --tilt: -6deg; }
+  /* ĐÃ SỬA: ảnh 5 chuyển từ dưới bên trái sang dưới bên phải */
+  .p5 { bottom: 2%; right: 13%; left: auto; --tilt: 4deg; }
+  .center-card {
+    position: absolute; left: 50%; top: 48%; transform: translate(-50%,-50%);
+    width: min(470px, 47%); min-width: 290px; padding: 24px 24px 22px;
+    background: rgba(255,255,255,.91); border: 1px solid #ffd2e2;
+    border-radius: 25px; box-shadow: 0 16px 45px rgba(217,95,145,.16);
+    text-align: center; z-index: 3;
+  }
+  .bouquet {
+    width: 100%;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  .bouquet img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    mix-blend-mode: multiply;
+  }
+  .center-card h3 { font-size: clamp(21px, 3vw, 29px); color: #c84f82; margin: 4px 0 10px; }
+  .wish { font-size: clamp(13px, 1.45vw, 16px); line-height: 1.7; margin: 0; }
+  .signature { color: #d45d91; font-weight: 700; margin-top: 12px; font-size: 14px; }
+  .nav-row { display: flex; gap: 12px; justify-content: center; align-items: center; padding: 12px 0 0; position: relative; z-index: 6; }
+  .secondary-btn { background: #fff; color: #c84f82; border: 1px solid #efb5cc; box-shadow: none; }
+  .page-number { font-size: 12px; color: #b16a89; }
+  .video-card {
+    position: absolute; left: 50%; top: 48%; transform: translate(-50%,-50%);
+    width: min(270px, 30%); min-width: 190px; height: min(490px, 78%);
+    background: white; border: 7px solid white; border-radius: 23px;
+    box-shadow: 0 16px 45px rgba(217,95,145,.2); overflow: hidden; z-index: 3;
+  }
+  .video-card video { width: 100%; height: 100%; display: block; object-fit: cover; background: linear-gradient(160deg,#ffe8f1,#fff7fb); }
+  .video-placeholder { height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px; text-align: center; padding: 20px; color: #c16c91; background: linear-gradient(160deg,#ffe8f1,#fff7fb); font-size: 14px; }
+  .play-symbol { font-size: 42px; }
+  .page2 .p3 { top: 38%; left: 2%; }
+  .page2 .p4 { top: 38%; right: 2%; }
+  /* Trang 2: giữ ảnh 10 ở dưới bên trái như cũ */
+  .page2 .p5 { bottom: 1%; left: 15%; right: auto; --tilt: -4deg; }
+  .page2 .p2 { right: 7%; }
+  .page2 .p1 { left: 7%; }
+  .footer-note { text-align: center; color: #c17b99; font-size: 12px; margin: 10px 0 0; }
+  @media (max-width: 650px) {
+    .screen { padding: 20px 10px 30px; }
+    .collage { min-height: 650px; }
+    .photo { width: clamp(82px, 25vw, 125px); height: clamp(112px, 32vw, 155px); padding: 5px 5px 19px; }
+    .p1 { top: 2%; left: 2%; }
+    .p2 { top: 2%; right: 2%; }
+    .p3 { top: 31%; left: 0%; }
+    .p4 { top: 31%; right: 0%; }
+    .p5 { bottom: 2%; right: 4%; left: auto; }
+    .center-card { width: 78%; min-width: 0; top: 52%; padding: 18px 14px; }
+    .wish { font-size: 13px; line-height: 1.55; }
+    .bouquet { height: 135px; }
+    .video-card { width: 43%; min-width: 145px; height: 56%; top: 52%; }
+    .page2 .p3, .page2 .p4 { top: 34%; }
+    .page2 .p5 { bottom: 2%; left: 4%; right: auto; }
+    .page-heading p { max-width: 300px; margin: auto; }
+    .nav-row { flex-wrap: wrap; }
+  }
+  @media (max-height: 700px) and (min-width: 651px) {
+    .collage { min-height: 490px; }
+    .photo { height: 170px; }
+    .center-card { padding: 15px 20px; }
+    .wish { line-height: 1.45; }
+    .bouquet { height: 135px; }
+    .video-card { height: 390px; }
+  }
+</style>
+</head>
+<body>
+  <section id="lock-screen" class="screen active">
+    <span class="floating-heart heart-a">♡</span><span class="floating-heart heart-b">♥</span><span class="floating-heart heart-c">✿</span>
+    <div class="lock-card">
+      <div class="lock-icon">💌</div>
+      <div class="eyebrow">a little surprise for you</div>
+      <h1>Món quà nhỏ dành cho Ánh Ngọc</h1>
+      <p>Muốn mở món quà này thì trả lời câu hỏi nhé 💗</p>
+      <p><strong>“Ngày sinh và tháng sinh của bạn là gì?”</strong></p>
+      <form id="pin-form">
+        <input class="pin-input" id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" aria-label="Nhập mã PIN" autocomplete="off" required>
+        <button class="primary-btn" type="submit">Mở món quà 💖</button>
+        <p id="pin-error" aria-live="polite"></p>
+      </form>
+      <p style="font-size:12px;color:#c17b99;margin:8px 0 0;">Một món quà nhỏ, hơi vội nên không được chỉnh chu cho lắm ^^</p>
+    </div>
+  </section>
+
+  <section id="page-one" class="screen gift-screen">
+    <header class="page-heading">
+      <div class="eyebrow">20 tháng 10 · dành tặng bạn</div>
+      <h2>Gửi Ánh Ngọc!!! 🌷</h2>
+    </header>
+    <div class="collage">
+      <div class="photo p1"><img src="a1.jpg" alt="Ảnh 1" data-placeholder="Ảnh kỷ niệm 1"></div>
+      <div class="photo p2"><img src="a2.jpg" alt="Ảnh 2" data-placeholder="Ảnh kỷ niệm 2"></div>
+      <div class="photo p3"><img src="a3.jpg" alt="Ảnh 3" data-placeholder="Ảnh kỷ niệm 3"></div>
+      <div class="photo p4"><img src="a4.jpg" alt="Ảnh 4" data-placeholder="Ảnh kỷ niệm 4"></div>
+      <div class="photo p5"><img src="a5.jpg" alt="Ảnh 5" data-placeholder="Ảnh kỷ niệm 5"></div>
+      <article class="center-card">
+        <div class="bouquet">
+          <img src="anhbohoa.png" alt="Bó hoa dành tặng Ánh Ngọc">
+        </div>
+        <h3>Gửi Khưu Ánh Ngọc 💗</h3>
+        <p class="wish">
+          Chúc bạn Ánh Ngọc có một ngày 20/10 thật vui vẻ, ngập tràn hoa, quà và những điều dễ thương.
+          Mong bạn luôn xinh tươi, rạng rỡ, tự tin là chính mình và gặp thật nhiều may mắn.
+          Hy vọng những ngày phía trước của bạn sẽ có thật nhiều tiếng cười, những người chân thành bên cạnh
+          và những điều nhỏ bé cũng đủ khiến bạn hạnh phúc. Đừng buồn phiền hay suy nghĩ quá nhiều vì những
+          chuyện không đáng nhé. Nếu có ngày mệt mỏi, hãy nhớ rằng bạn vẫn luôn xứng đáng được yêu thương,
+          trân trọng và đối xử thật dịu dàng. Chúc bạn lúc nào cũng bình an, vui vẻ và luôn
+          giữ nụ cười thật đẹp trên môi. 🌷
+        </p>
+        <div class="signature">Chúc bạn luôn hạnh phúc nhé! ♡</div>
+      </article>
+    </div>
+    <div class="nav-row">
+      <span class="page-number">1/2</span>
+      <button class="nav-btn" onclick="showPage(2)">Tiếp theo →</button>
+    </div>
+    <div class="footer-note">Just for you ♡</div>
+  </section>
+
+  <section id="page-two" class="screen gift-screen page2">
+    <header class="page-heading">
+      <div class="eyebrow">Hy vọng video này sẽ làm bạn vui!!!!</div>
+      <h2>Món quà dành cho bạn 🎀</h2>
+      <p>HẸ HẸ HẸ</p>
+    </header>
+    <div class="collage">
+      <!-- ẢNH 6 -->
+      <div class="photo p1"><img src="a6.jpg" alt="Ảnh kỷ niệm 6" data-placeholder="Ảnh kỷ niệm 6"></div>
+      <!-- ẢNH 7 -->
+      <div class="photo p2"><img src="a7.jpg" alt="Ảnh kỷ niệm 7" data-placeholder="Ảnh kỷ niệm 7"></div>
+      <!-- ẢNH 8 -->
+      <div class="photo p3"><img src="a8.jpg" alt="Ảnh kỷ niệm 8" data-placeholder="Ảnh kỷ niệm 8"></div>
+      <!-- ẢNH 9 -->
+      <div class="photo p4"><img src="a9.jpg" alt="Ảnh kỷ niệm 9" data-placeholder="Ảnh kỷ niệm 9"></div>
+      <!-- ẢNH 10 -->
+      <div class="photo p5"><img src="a10.jpg" alt="Ảnh kỷ niệm 10" data-placeholder="Ảnh kỷ niệm 10"></div>
+
+      <div class="video-card" id="video-card">
+        <video id="gift-video" src="hehe.mp4" controls playsinline preload="metadata" aria-label="Video dành tặng Ánh Ngọc"></video>
+        <div class="video-placeholder" id="video-placeholder">
+          <div class="play-symbol">♡</div>
+          <strong>Video dành tặng Ánh Ngọc</strong>
+          <span>Thêm đường dẫn video vào phần <code>src=""</code> trong mã HTML nhé.</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn secondary-btn" onclick="showPage(1)">← Quay lại</button>
+      <span class="page-number">2/2</span>
+      <button class="nav-btn" onclick="backToStart()">Xem lại từ đầu ↺</button>
+    </div>
+    <div class="footer-note">hehehehehehehe 💗</div>
+  </section>
+
+<script>
+  const CORRECT_PIN = "2601";
+
+  document.getElementById("pin-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const pin = document.getElementById("pin").value.trim();
+    const error = document.getElementById("pin-error");
+    if (pin === CORRECT_PIN) {
+      error.textContent = "";
+      showPage(1);
+    } else {
+      error.textContent = "Mã PIN chưa đúng rồi, thử lại nhé 💕";
+      document.getElementById("pin").value = "";
+      document.getElementById("pin").focus();
+    }
+  });
+
+  // Tự phát video khi sang trang 2, tự dừng khi rời trang 2
+  function showPage(page) {
+    document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
+    const target = page === 2 ? document.getElementById("page-two") : document.getElementById("page-one");
+    target.classList.add("active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    const video = document.getElementById("gift-video");
+    if (!video) return;
+
+    if (page === 2) {
+      video.currentTime = 0; // phát lại từ đầu
+      const p = video.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          // Nếu trình duyệt vẫn chặn có tiếng, thử phát không tiếng
+          video.muted = true;
+          video.play().catch(() => {});
+        });
+      }
+    } else {
+      video.pause();
+    }
+  }
+
+  // Dừng video khi quay về màn hình khóa
+  function backToStart() {
+    const video = document.getElementById("gift-video");
+    if (video) video.pause();
+    document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
+    document.getElementById("lock-screen").classList.add("active");
+    document.getElementById("pin").value = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // Khi ảnh chưa có đường dẫn, hiển thị khung hướng dẫn thay vì biểu tượng ảnh lỗi.
+  document.querySelectorAll(".photo img").forEach(img => {
+    const placeholder = document.createElement("div");
+    placeholder.className = "placeholder";
+    placeholder.textContent = "♡ " + img.dataset.placeholder + " ♡";
+    img.parentElement.appendChild(placeholder);
+    img.style.display = "none";
+    function updateImage() {
+      if (img.getAttribute("src") && img.getAttribute("src").trim() !== "") {
+        img.style.display = "block";
+        placeholder.style.display = "none";
+      } else {
+        img.style.display = "none";
+        placeholder.style.display = "flex";
+      }
+    }
+    img.addEventListener("load", updateImage);
+    img.addEventListener("error", updateImage);
+    updateImage();
+  });
+
+  const video = document.getElementById("gift-video");
+  const videoPlaceholder = document.getElementById("video-placeholder");
+  function updateVideoPlaceholder() {
+    const hasSource = video.getAttribute("src") && video.getAttribute("src").trim() !== "";
+    videoPlaceholder.style.display = hasSource ? "none" : "flex";
+    video.style.display = hasSource ? "block" : "none";
+  }
+  video.addEventListener("loadedmetadata", updateVideoPlaceholder);
+  video.addEventListener("error", updateVideoPlaceholder);
+  updateVideoPlaceholder();
+</script>
+</body>
+</html>
