@@ -30,7 +30,6 @@
     overflow: hidden;
   }
   .screen.active { display: flex; }
-  /* Màn hình nhập mã PIN */
   #lock-screen { align-items: center; justify-content: center; }
   .lock-card {
     width: min(420px, 94vw);
@@ -70,7 +69,6 @@
   .heart-c { top: 20%; right: 20%; font-size: 22px; animation-delay: 2s; }
   @keyframes float { 0%,100% { transform: translateY(0) rotate(-8deg); } 50% { transform: translateY(-18px) rotate(8deg); } }
 
-  /* Hai trang quà tặng */
   .gift-screen { flex-direction: column; align-items: center; }
   .page-heading { text-align: center; position: relative; z-index: 2; margin: 2px auto 12px; }
   .page-heading h2 { color: #c84f82; font-size: clamp(25px, 4vw, 38px); margin: 7px 0; }
@@ -106,7 +104,6 @@
   .p2 { top: 2%; right: 5%; --tilt: 7deg; }
   .p3 { top: 38%; left: 0%; --tilt: 5deg; }
   .p4 { top: 39%; right: 0%; --tilt: -6deg; }
-  /* ĐÃ SỬA: ảnh 5 chuyển từ dưới bên trái sang dưới bên phải */
   .p5 { bottom: 2%; right: 13%; left: auto; --tilt: 4deg; }
   .center-card {
     position: absolute; left: 50%; top: 48%; transform: translate(-50%,-50%);
@@ -148,7 +145,7 @@
   .play-symbol { font-size: 42px; }
   .page2 .p3 { top: 38%; left: 2%; }
   .page2 .p4 { top: 38%; right: 2%; }
-  /* Trang 2: giữ ảnh 10 ở dưới bên trái như cũ */
+
   .page2 .p5 { bottom: 1%; left: 15%; right: auto; --tilt: -4deg; }
   .page2 .p2 { right: 7%; }
   .page2 .p1 { left: 7%; }
@@ -286,7 +283,6 @@
     }
   });
 
-  // Tự phát video khi sang trang 2, tự dừng khi rời trang 2
   function showPage(page) {
     document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
     const target = page === 2 ? document.getElementById("page-two") : document.getElementById("page-one");
@@ -297,11 +293,10 @@
     if (!video) return;
 
     if (page === 2) {
-      video.currentTime = 0; // phát lại từ đầu
+      video.currentTime = 0; 
       const p = video.play();
       if (p !== undefined) {
         p.catch(() => {
-          // Nếu trình duyệt vẫn chặn có tiếng, thử phát không tiếng
           video.muted = true;
           video.play().catch(() => {});
         });
@@ -311,7 +306,6 @@
     }
   }
 
-  // Dừng video khi quay về màn hình khóa
   function backToStart() {
     const video = document.getElementById("gift-video");
     if (video) video.pause();
@@ -321,7 +315,6 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  // Khi ảnh chưa có đường dẫn, hiển thị khung hướng dẫn thay vì biểu tượng ảnh lỗi.
   document.querySelectorAll(".photo img").forEach(img => {
     const placeholder = document.createElement("div");
     placeholder.className = "placeholder";
