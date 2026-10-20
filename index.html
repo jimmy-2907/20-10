@@ -238,23 +238,15 @@
       <p>HẸ HẸ HẸ</p>
     </header>
     <div class="collage">
-      <!-- ẢNH 6 -->
-      <div class="photo p1"><img src="a6.jpg" alt="Ảnh kỷ niệm 6" data-placeholder="Ảnh kỷ niệm 6"></div>
-      <!-- ẢNH 7 -->
-      <div class="photo p2"><img src="a7.jpg" alt="Ảnh kỷ niệm 7" data-placeholder="Ảnh kỷ niệm 7"></div>
-      <!-- ẢNH 8 -->
-      <div class="photo p3"><img src="a8.jpg" alt="Ảnh kỷ niệm 8" data-placeholder="Ảnh kỷ niệm 8"></div>
-      <!-- ẢNH 9 -->
-      <div class="photo p4"><img src="a9.jpg" alt="Ảnh kỷ niệm 9" data-placeholder="Ảnh kỷ niệm 9"></div>
-      <!-- ẢNH 10 -->
-      <div class="photo p5"><img src="a10.jpg" alt="Ảnh kỷ niệm 10" data-placeholder="Ảnh kỷ niệm 10"></div>
-
+      <div class="photo p1"><img src="a6.jpg" alt="Ảnh 6" data-placeholder="Ảnh kỷ niệm 6"></div>
+      <div class="photo p2"><img src="a7.jpg" alt="Ảnh 7" data-placeholder="Ảnh kỷ niệm 7"></div>
+      <div class="photo p3"><img src="a8.jpg" alt="Ảnh 8" data-placeholder="Ảnh kỷ niệm 8"></div>
+      <div class="photo p4"><img src="a9.jpg" alt="Ảnh 9" data-placeholder="Ảnh kỷ niệm 9"></div>
+      <div class="photo p5"><img src="a10.jpg" alt="Ảnh 10" data-placeholder="Ảnh kỷ niệm 10"></div>
       <div class="video-card" id="video-card">
         <video id="gift-video" src="hehe.mp4" controls playsinline preload="metadata" aria-label="Video dành tặng Ánh Ngọc"></video>
         <div class="video-placeholder" id="video-placeholder">
           <div class="play-symbol">♡</div>
-          <strong>Video dành tặng Ánh Ngọc</strong>
-          <span>Thêm đường dẫn video vào phần <code>src=""</code> trong mã HTML nhé.</span>
         </div>
       </div>
     </div>
@@ -282,7 +274,6 @@
       document.getElementById("pin").focus();
     }
   });
-
   function showPage(page) {
     document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
     const target = page === 2 ? document.getElementById("page-two") : document.getElementById("page-one");
